@@ -1,0 +1,7 @@
+app:
+ image: ibmcom/swift-ubuntu:3.1.1
+ ports:
+   - "8090:8090"
+ volumes:
+   - .:/root/WebSocketsDeployDemo
+ command: bash -c "cd /root/WebSocketsDeployDemo && swift package clean && swift build && ./.build/debug/WebSocketsDeployDemo"

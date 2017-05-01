@@ -1,0 +1,8 @@
+applications:
+- name: david-okun-websocket-demo
+  memory: 256M
+  instances: 1
+  random-route: true
+  disk_quota: 1024M
+  command: WebSocketsDeployDemo 
+  buildpack: swift_buildpack
