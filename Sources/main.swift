@@ -7,6 +7,10 @@ import LoggerAPI
 let router = Router()
 HeliumLogger.use()
 
+#if os(Linux)
+srand(UInt32(time(nil)))
+#endif
+
 private func generateRandomString(withLength: Int) -> String {
     Log.info("generating random string")
     let charArray: [String] = "abcdefghijklmnopqrstuvwxyz0123456789".characters.map { String($0) }
