@@ -3,16 +3,20 @@ import Kitura
 import KituraWebSocket
 import HeliumLogger
 import LoggerAPI
+import Configuration
+import CloudFoundryEnv
 
 let router = Router()
 HeliumLogger.use()
+
+let manager = ConfigurationManager().load(.environmentVariables)
 
 #if os(Linux)
 srand(UInt32(time(nil)))
 #endif
 
 private func generateRandomString(withLength: Int) -> String {
-    Log.info("generating random string")
+    Log.info("generating random string of length: \(withLength)")
     let charArray: [String] = "abcdefghijklmnopqrstuvwxyz0123456789".characters.map { String($0) }
     var randomString = ""
     for _ in 0 ..< withLength {
@@ -23,22 +27,21 @@ private func generateRandomString(withLength: Int) -> String {
         #endif
         randomString += charArray[rand]   
     }
-    
+    Log.info("Generated random string: \(randomString)")
     return randomString
 }
 
 router.get("/register") { request, response, next in
     defer { next() }
     Log.info("register path hit")
-    Log.info("sending path")
     let path = generateRandomString(withLength: 8)
+    Log.info("Sending response with path: \(path)")
     WebSocket.register(service: PathService(), onPath: path)
     response.send(json: ["path" : path])   
 }
 
-let envVars = ProcessInfo.processInfo.environment
-let portString = envVars["PORT"] ?? envVars["CF_INSTANCE_PORT"] ?? envVars["VCAP_APP_PORT"] ?? "8090"
-let port = Int(portString) ?? 8090
-Kitura.addHTTPServer(onPort: port, with: router)
-Log.info("API listening on port \(port)")
+Kitura.addHTTPServer(onPort: manager.port, with: router)
+
+Log.info("API listening on port \(manager.port)")
+
 Kitura.run()

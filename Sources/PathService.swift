@@ -19,6 +19,7 @@ class PathService: WebSocketService {
  
     public func received(message: String, from: WebSocketConnection) {
         messageCounter += 1
+        Log.info("Message #\(messageCounter) received: \(message)")
         from.send(message: "You've sent the following message to WebSocket id #\(from.id): \"\(message)\", and this is message #\(messageCounter) for this webSocket.")
     }
 }
